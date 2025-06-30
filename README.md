@@ -21,3 +21,5 @@
 - **实时通信**: WebSocket (ws)
 
 ## 安装和运行
+1.npm install
+2.npm start
