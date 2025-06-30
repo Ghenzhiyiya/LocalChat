@@ -1,0 +1,37 @@
+{
+  "name": "localchater",
+  "version": "1.0.0",
+  "description": "局域网聊天软件 - 支持IP添加好友和文件传输",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": ["electron", "chat", "lan", "file-transfer"],
+  "author": "LocalChater",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "multer": "^1.4.5-lts.1",
+    "express": "^4.18.2"
+  },
+  "build": {
+    "appId": "com.localchater.app",
+    "productName": "LocalChater",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "node_modules/ws/**/*",
+      "node_modules/express/**/*",
+      "node_modules/multer/**/*"
+    ]
+  }
+}

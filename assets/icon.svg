@@ -1,0 +1,54 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景渐变 -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.7" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景圆角矩形 -->
+  <rect width="256" height="256" rx="32" ry="32" fill="url(#bgGradient)"/>
+  
+  <!-- 主要聊天气泡 -->
+  <path d="M60 80 C60 65 72 53 87 53 L169 53 C184 53 196 65 196 80 L196 130 C196 145 184 157 169 157 L120 157 L87 180 L87 157 C72 157 60 145 60 130 Z" fill="url(#iconGradient)" opacity="0.9"/>
+  
+  <!-- 次要聊天气泡 -->
+  <path d="M80 120 C80 105 92 93 107 93 L189 93 C204 93 216 105 216 120 L216 170 C216 185 204 197 189 197 L140 197 L107 220 L107 197 C92 197 80 185 80 170 Z" fill="url(#iconGradient)" opacity="0.7"/>
+  
+  <!-- 网络连接图标 -->
+  <g transform="translate(40, 40)">
+    <!-- 节点 -->
+    <circle cx="30" cy="30" r="8" fill="#ffffff" opacity="0.8"/>
+    <circle cx="90" cy="30" r="8" fill="#ffffff" opacity="0.8"/>
+    <circle cx="150" cy="30" r="8" fill="#ffffff" opacity="0.8"/>
+    <circle cx="60" cy="80" r="8" fill="#ffffff" opacity="0.8"/>
+    <circle cx="120" cy="80" r="8" fill="#ffffff" opacity="0.8"/>
+    
+    <!-- 连接线 -->
+    <line x1="30" y1="30" x2="90" y2="30" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <line x1="90" y1="30" x2="150" y2="30" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <line x1="30" y1="30" x2="60" y2="80" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <line x1="90" y1="30" x2="60" y2="80" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <line x1="90" y1="30" x2="120" y2="80" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <line x1="150" y1="30" x2="120" y2="80" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+  </g>
+  
+  <!-- 文件传输图标 -->
+  <g transform="translate(180, 180)">
+    <!-- 文件夹 -->
+    <path d="M10 10 L25 10 L30 15 L50 15 C55 15 60 20 60 25 L60 45 C60 50 55 55 50 55 L20 55 C15 55 10 50 10 45 Z" fill="#ffffff" opacity="0.7"/>
+    <!-- 箭头 -->
+    <path d="M35 25 L35 40 M30 35 L35 40 L40 35" stroke="#667eea" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- 装饰性元素 -->
+  <circle cx="200" cy="60" r="4" fill="#ffffff" opacity="0.5"/>
+  <circle cx="220" cy="80" r="3" fill="#ffffff" opacity="0.4"/>
+  <circle cx="40" cy="200" r="5" fill="#ffffff" opacity="0.3"/>
+  <circle cx="60" cy="220" r="3" fill="#ffffff" opacity="0.4"/>
+</svg>

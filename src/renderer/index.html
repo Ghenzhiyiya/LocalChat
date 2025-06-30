@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalChater - P2P局域网聊天</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 加载状态指示器 -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在初始化应用...</div>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="loading-details" id="loading-details">正在启动...</div>
+        </div>
+    </div>
+
+    <!-- 自定义标题栏 -->
+    <div class="title-bar">
+        <div class="title-bar-left">
+            <i class="fas fa-comments"></i>
+            <span class="app-title">LocalChater</span>
+        </div>
+        <div class="title-bar-right">
+            <button id="minimize-btn" class="title-btn">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="maximize-btn" class="title-btn">
+                <i class="fas fa-square"></i>
+            </button>
+            <button id="close-btn" class="title-btn close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <!-- 用户信息 -->
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-nickname" id="user-nickname">加载中...</div>
+                    <div class="user-status">
+                        <span class="status-indicator online"></span>
+                        <span id="user-ip">127.0.0.1</span>
+                        <span id="server-port">:8888</span>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <button id="edit-nickname-btn" class="action-btn" title="修改昵称">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button id="set-avatar-btn" class="action-btn" title="设置头像">
+                        <i class="fas fa-image"></i>
+                    </button>
+                    <button id="server-settings-btn" class="action-btn" title="服务器设置">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 功能按钮 -->
+            <div class="sidebar-actions">
+                <button id="add-friend-btn" class="primary-btn">
+                    <i class="fas fa-user-plus"></i>
+                    添加好友
+                </button>
+                <button id="auto-connect-btn" class="secondary-btn">
+                    <i class="fas fa-wifi"></i>
+                    自动连接
+                </button>
+                <button id="cleanup-peers-btn" class="secondary-btn" title="清理掉线的重复IP地址">
+                    <i class="fas fa-broom"></i>
+                    清理重复IP
+                </button>
+                <button id="scan-network-btn" class="secondary-btn" title="扫描同网段的8888端口并自动连接">
+                    <i class="fas fa-search"></i>
+                    扫描网段
+                </button>
+            </div>
+
+            <!-- 好友列表 -->
+            <div class="friends-section">
+                <div class="section-header">
+                    <h3>好友列表</h3>
+                    <span id="friends-count" class="count">0</span>
+                </div>
+                <div id="friends-list" class="friends-list">
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>暂无好友</p>
+                        <p>点击上方按钮添加好友</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主聊天区域 -->
+        <div class="main-content">
+            <!-- 聊天头部 -->
+            <div class="chat-header">
+                <div class="chat-user-info">
+                    <div class="chat-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="chat-user-details">
+                        <div class="chat-user-name">选择一个好友开始聊天</div>
+                        <div class="chat-user-status">离线</div>
+                        <div class="chat-user-version">版本: 未知版本</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button id="send-file-btn" class="action-btn" title="发送文件" disabled>
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button id="clear-chat-btn" class="action-btn" title="清空聊天" disabled>
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 聊天消息区域 -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h2>欢迎使用 LocalChater</h2>
+                    <p>这是一个P2P局域网聊天软件</p>
+                    <p>每个用户既是服务器也是客户端</p>
+                    <p>支持实时聊天和文件传输</p>
+                    
+                    <div class="usage-tips">
+                        <h3><i class="fas fa-lightbulb"></i> 使用说明</h3>
+                        <ul>
+                            <li><strong>添加好友：</strong>点击"添加好友"按钮，输入对方的IP地址和端口号（默认8888）</li>
+                            <li><strong>确保连通：</strong>双方都需要启动应用，且在同一局域网内</li>
+                            <li><strong>防火墙：</strong>如果连接失败，请检查防火墙设置，允许应用通过网络</li>
+                            <li><strong>本机信息：</strong>你的IP地址显示在左下角，告诉朋友这个地址来连接你</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="welcome-actions">
+                        <button id="welcome-add-friend" class="primary-btn">
+                            <i class="fas fa-user-plus"></i>
+                            添加第一个好友
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 消息输入区域 -->
+            <div class="message-input-area">
+                <div class="input-container">
+                    <button id="file-btn" class="input-action-btn" title="发送文件" disabled>
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <textarea 
+                        id="message-input" 
+                        placeholder="输入消息... (Enter发送, Shift+Enter换行)"
+                        disabled
+                    ></textarea>
+                    <button id="send-btn" class="send-btn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加好友模态框 -->
+    <div id="add-friend-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加好友</h3>
+                <button id="close-add-friend-modal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="local-info">
+                    <p><strong>你的信息：</strong></p>
+                    <p>IP地址: <span id="local-ip-display">获取中...</span></p>
+                    <p>端口号: <span id="local-port-display">8888</span></p>
+                    <p class="tip">请将此信息告诉对方，以便对方添加你为好友</p>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label for="friend-ip">对方IP地址:</label>
+                    <input type="text" id="friend-ip" placeholder="例如: 192.168.1.100" value="127.0.0.1" list="recent-ips">
+                    <datalist id="recent-ips"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="friend-port">对方端口:</label>
+                    <input type="number" id="friend-port" placeholder="端口号" value="8888" min="1" max="65535">
+                </div>
+                <div class="connection-status" id="connection-status"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-add-friend" class="secondary-btn">取消</button>
+                <button id="confirm-add-friend" class="primary-btn">连接</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 昵称编辑模态框 -->
+    <div id="nickname-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>修改昵称</h3>
+                <button id="close-nickname-modal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nickname-input">新昵称:</label>
+                    <input type="text" id="nickname-input" placeholder="输入新昵称" maxlength="20">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-nickname" class="secondary-btn">取消</button>
+                <button id="confirm-nickname" class="primary-btn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头像设置模态框 -->
+    <div id="avatar-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置头像</h3>
+                <button id="close-avatar-modal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-options">
+                    <div class="avatar-option" data-icon="fas fa-user">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-cat">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-dog">
+                        <i class="fas fa-dog"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-robot">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-rocket">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-star">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-heart">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="avatar-option" data-icon="fas fa-crown">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 服务器设置模态框 -->
+    <div id="server-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>服务器设置</h3>
+                <button id="close-server-modal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="server-port-input">服务器端口:</label>
+                    <input type="number" id="server-port-input" placeholder="端口号" value="8888" min="1" max="65535">
+                    <small>修改端口后需要重启服务器</small>
+                </div>
+                <div class="server-status">
+                    <div class="status-item">
+                        <span>服务器状态:</span>
+                        <span id="server-status" class="status-value">运行中</span>
+                    </div>
+                    <div class="status-item">
+                        <span>连接数:</span>
+                        <span id="connection-count" class="status-value">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="restart-server-btn" class="secondary-btn">重启服务器</button>
+                <button id="save-server-settings" class="primary-btn">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- 加载脚本 -->
+    <script src="js/main.js"></script>
+</body>
+</html>
