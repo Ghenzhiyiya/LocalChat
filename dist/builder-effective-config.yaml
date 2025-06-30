@@ -1,0 +1,23 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.localchater.app
+productName: LocalChater
+copyright: Copyright © 2024 LocalChater Team
+files:
+  - filter:
+      - '**/*'
+      - node_modules/**/*
+win:
+  target:
+    - target: portable
+      arch:
+        - x64
+  requestedExecutionLevel: asInvoker
+mac:
+  target: dmg
+  category: public.app-category.social-networking
+linux:
+  target: AppImage
+  category: Network
+electronVersion: 27.3.11

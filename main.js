@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog, shell, Tray } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Tray } = require('electron');
 const path = require('path');
 const os = require('os');
 const P2PServer = require('./src/server/p2pServer');
@@ -225,14 +225,22 @@ class LocalChaterApp {
             {
                 label: '显示主窗口',
                 click: () => {
-                    this.showMainWindow();
+                    try {
+                        this.showMainWindow();
+                    } catch (error) {
+                        console.error('显示主窗口失败:', error);
+                    }
                 }
             },
             {
                 label: '隐藏窗口',
                 click: () => {
-                    if (this.mainWindow) {
-                        this.mainWindow.hide();
+                    try {
+                        if (this.mainWindow) {
+                            this.mainWindow.hide();
+                        }
+                    } catch (error) {
+                        console.error('隐藏窗口失败:', error);
                     }
                 }
             },
@@ -240,15 +248,25 @@ class LocalChaterApp {
             {
                 label: '关于',
                 click: () => {
-                    this.showMainWindow();
-                    // 可以在这里添加关于对话框的逻辑
+                    try {
+                        this.showMainWindow();
+                        // 可以在这里添加关于对话框的逻辑
+                    } catch (error) {
+                        console.error('显示关于窗口失败:', error);
+                    }
                 }
             },
             { type: 'separator' },
             {
                 label: '退出',
                 click: () => {
-                    this.quitApp();
+                    try {
+                        this.quitApp();
+                    } catch (error) {
+                        console.error('退出应用失败:', error);
+                        // 强制退出
+                        process.exit(0);
+                    }
                 }
             }
         ]);
@@ -258,14 +276,22 @@ class LocalChaterApp {
         
             // 托盘图标双击事件 - 显示/隐藏主窗口
             this.tray.on('double-click', () => {
-                console.log('托盘图标双击');
-                this.toggleMainWindow();
+                try {
+                    console.log('托盘图标双击');
+                    this.toggleMainWindow();
+                } catch (error) {
+                    console.error('托盘双击事件处理失败:', error);
+                }
             });
             
             // 托盘图标单击事件 - 显示主窗口
             this.tray.on('click', () => {
-                console.log('托盘图标单击');
-                this.showMainWindow();
+                try {
+                    console.log('托盘图标单击');
+                    this.showMainWindow();
+                } catch (error) {
+                    console.error('托盘单击事件处理失败:', error);
+                }
             });
             
             console.log('托盘事件监听器已设置');
@@ -275,26 +301,48 @@ class LocalChaterApp {
     }
 
     showMainWindow() {
-        if (this.mainWindow) {
-            if (this.mainWindow.isMinimized()) {
-                this.mainWindow.restore();
+        try {
+            if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+                if (this.mainWindow.isMinimized()) {
+                    this.mainWindow.restore();
+                }
+                this.mainWindow.show();
+                this.mainWindow.focus();
+            } else {
+                console.log('主窗口不存在或已销毁，重新创建');
+                this.createWindow();
             }
-            this.mainWindow.show();
-            this.mainWindow.focus();
-        } else {
-            this.createWindow();
+        } catch (error) {
+            console.error('显示主窗口时发生错误:', error);
+            // 尝试重新创建窗口
+            try {
+                this.createWindow();
+            } catch (createError) {
+                console.error('重新创建窗口失败:', createError);
+            }
         }
     }
 
     toggleMainWindow() {
-        if (this.mainWindow) {
-            if (this.mainWindow.isVisible()) {
-                this.mainWindow.hide();
+        try {
+            if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+                if (this.mainWindow.isVisible()) {
+                    this.mainWindow.hide();
+                } else {
+                    this.showMainWindow();
+                }
             } else {
-                this.showMainWindow();
+                console.log('主窗口不存在或已销毁，重新创建');
+                this.createWindow();
             }
-        } else {
-            this.createWindow();
+        } catch (error) {
+            console.error('切换主窗口状态时发生错误:', error);
+            // 尝试重新创建窗口
+            try {
+                this.createWindow();
+            } catch (createError) {
+                console.error('重新创建窗口失败:', createError);
+            }
         }
     }
 

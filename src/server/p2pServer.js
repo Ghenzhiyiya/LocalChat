@@ -161,7 +161,7 @@ class P2PServer extends EventEmitter {
         console.log(`扫描配置: 批次大小=5, 超时=3秒, 批次间隔=100ms\n`);
         
         // 创建扫描任务，减少并发数量提高成功率
-        const batchSize = 50; // 减少并发数量
+        const batchSize = 64; // 减少并发数量
         const delay = 10; // 每批次间隔100ms
         
         let batchCount = 0;
@@ -640,16 +640,8 @@ class P2PServer extends EventEmitter {
             });
 
             if (response.ok) {
-                const messageData = {
-                    id: this.generateId(),
-                    senderId: this.userInfo.id,
-                    senderNickname: this.userInfo.nickname,
-                    content: message,
-                    type: 'text',
-                    timestamp: Date.now()
-                };
-                
-                this.addMessageToHistory(peerId, messageData);
+                // 消息发送成功，不需要在服务器端添加历史记录
+                // 历史记录由前端负责管理
                 return true;
             } else {
                 throw new Error('发送失败');
@@ -699,16 +691,8 @@ class P2PServer extends EventEmitter {
             });
 
             if (response.ok) {
-                const messageData = {
-                    id: this.generateId(),
-                    senderId: this.userInfo.id,
-                    senderNickname: this.userInfo.nickname,
-                    type: 'file',
-                    fileInfo: fileInfo,
-                    timestamp: Date.now()
-                };
-                
-                this.addMessageToHistory(peerId, messageData);
+                // 文件发送成功，不需要在服务器端添加历史记录
+                // 历史记录由前端负责管理
                 return true;
             } else {
                 throw new Error('文件发送失败');

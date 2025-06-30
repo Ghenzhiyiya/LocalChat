@@ -20,6 +20,7 @@ class P2PChater {
             port: 8888
         };
         this.recentPeers = [];
+        this.ipcSetup = false; // 防止重复绑定IPC事件监听器
         
         // 加载进度管理
         this.loadingManager = {
@@ -252,7 +253,7 @@ class P2PChater {
     setupBasicFunctionality() {
         try {
             this.setupEventListeners();
-            this.setupIPC();
+            // 移除重复的setupIPC调用，避免事件监听器重复绑定
             console.log('基本功能已设置');
         } catch (error) {
             console.error('设置基本功能失败:', error);
@@ -674,6 +675,12 @@ class P2PChater {
     }
 
     setupIPC() {
+        // 自动移除已存在的事件监听器，防止重复绑定
+        const events = ['peer-connected', 'peer-disconnected', 'message-received', 'file-received', 'server-error', 'show-add-friend-dialog', 'file-selected', 'edit-nickname', 'edit-avatar', 'server-settings', 'peer-info-updated'];
+        events.forEach(eventName => {
+            ipcRenderer.removeAllListeners(eventName);
+        });
+
         // 监听来自主进程的事件
         ipcRenderer.on('peer-connected', (event, peer) => {
             this.onPeerConnected(peer);
